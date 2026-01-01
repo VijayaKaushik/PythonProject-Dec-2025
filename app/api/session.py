@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
 from app.models.init_session import InitSessionRequest, InitSessionResponse
-from app.service.session_service import get_session_info, create_session
+from app.service.adk.session_service import get_session_info, create_session
 
 router = APIRouter(prefix="/session",tags=["session"])
 

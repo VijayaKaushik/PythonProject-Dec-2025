@@ -8,8 +8,8 @@ router = APIRouter(prefix="/chat",tags=["chat"])
 
 
 @router.post("",response_model=ChatResponse)
-async def chat(request: ChatRequest):
-    return await exec_chat(request)  ##exceptions are not handled at the moment ; add try catch later
+def chat(request: ChatRequest):
+    return exec_chat(request)  ##exceptions are not handled at the moment ; add try catch later
 
 @router.get("/history",response_model=ChatHistoryResponse)
 async def get_chat_history(request:ChatHistoryRequest):

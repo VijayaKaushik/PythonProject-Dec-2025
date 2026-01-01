@@ -1,6 +1,7 @@
 from google.adk.sessions import InMemorySessionService,Session
 import  uuid
 from datetime import datetime
+from typing import List
 
 from app.models.init_session import InitSessionRequest, InitSessionResponse
 
@@ -20,4 +21,28 @@ async def create_session(request: InitSessionRequest)->InitSessionResponse:
 
 async def get_session_info(session_id:str,user_id:str):
     session_obj=await session_service.get_session(session_id=session_id,app_name= "GoogleADK",user_id=user_id)
-    return session_obj.state
+    return session_obj.events
+
+
+async def get_events(session_id:str,user_id:str):
+    session_obj=await session_service.get_session(session_id=session_id,app_name= "GoogleADK",user_id=user_id)
+    return session_obj.events
+
+async def get_ai_user_chat_history(session_id:str,user_id:str) -> List[str]:
+    events_data=await get_events(session_id=session_id,user_id=user_id)
+    history=[]
+    for event in events_data:
+        if event.author =="user" :
+            history.append(("user",event.content.parts[0].text))
+        elif event.is_final_response() and event.content and event.content.parts:
+            history.append(("ai",event.content.parts[0].text))
+
+    return history
+
+
+'''
+[
+("user","list all templates"),
+("ai","Here are the list of template"),
+("user","user"),)
+]'''

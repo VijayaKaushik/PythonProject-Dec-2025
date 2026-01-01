@@ -6,7 +6,7 @@ from pydantic import BaseModel
 class  ChatMessage(BaseModel):
     role: str
     message: str
-    timestamp: str
+    #timestamp: str
 
 
 class ChatHistoryResponse(BaseModel):
