@@ -1,8 +1,9 @@
+import json
 from datetime import datetime
 
 from app.models.chat_history import ChatHistoryRequest, ChatMessage, ChatHistoryResponse
 from app.models.chat_request import ChatRequest, ChatResponse
-from app.service.adk.runner_service import run_query
+from app.service.adk.runner_service import run_query, run_query_sse
 from app.service.adk.session_service import get_ai_user_chat_history
 import uuid
 
@@ -11,6 +12,22 @@ import uuid
 def exec_chat(request: ChatRequest) -> ChatResponse:
     ai_response= run_query(query=request.user_msg,session_id=request.session_id,user_id=request.user_id)
     return ChatResponse(msg_id=str(uuid.uuid4()), message=ai_response,created_at=datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+
+async def exec_chat_sse(request: ChatRequest):
+    print("inside chat service sse")
+    for ai_response in run_query_sse(
+        query=request.user_msg,
+        session_id=request.session_id,
+        user_id=request.user_id
+    ):
+        print("returning agent response")
+        response = ChatResponse(
+            msg_id=str(uuid.uuid4()),
+            message=ai_response,  # or ai_response.content if needed
+            created_at=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        )
+        # Format as SSE
+        yield f"data: {json.dumps(response.model_dump())}\n\n"
 
 
 async def get_all_messages(request: ChatHistoryRequest):

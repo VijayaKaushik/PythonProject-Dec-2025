@@ -40,9 +40,3 @@ async def get_ai_user_chat_history(session_id:str,user_id:str) -> List[str]:
     return history
 
 
-'''
-[
-("user","list all templates"),
-("ai","Here are the list of template"),
-("user","user"),)
-]'''
